@@ -31,6 +31,8 @@ void LoadTex(Texture& tex, string filename) {
     //}
 //}
 
+//testing note.
+
 Vector2f GetTextSize(Text text) {
     FloatRect r = text.getGlobalBounds();
     return Vector2f(r.width, r.height);
