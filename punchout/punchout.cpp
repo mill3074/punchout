@@ -8,7 +8,7 @@ using namespace std;
 using namespace sf;
 using namespace sfp;
 
-const float KB_SPEED = 0.2;
+const float KB_SPEED = 2;
 
 //stuff, dont worry about this
 
@@ -53,13 +53,21 @@ int main()
     background.setTexture(bgTex);
     background.setCenter(Vector2f(500,500));
 
+    PhysicsSprite& Enemy = *new PhysicsSprite();
+    Texture enemyTex;
+    LoadTex(enemyTex, "images/enemy.png");
+    Enemy.setTexture(enemyTex);
+    Vector2f szEnemy = Enemy.getSize();
+    Enemy.setCenter(Vector2f(500,600));
 
-    PhysicsSprite& Player = *new PhysicsSprite();  //(Player was crossBow), (playTex was cbowTex)
+    PhysicsSprite& Player = *new PhysicsSprite();
     Texture playTex;
     LoadTex(playTex, "images/STAND.png");
     Player.setTexture(playTex);
     Vector2f sz = Player.getSize();
-    Player.setCenter(Vector2f(500,900 - (sz.y / 2)));
+    Player.setCenter(Vector2f(500,900));
+
+    //vvv i lwk dont need this but it was kinda in the grading so idk vvv
 
     PhysicsRectangle bottom;
     bottom.setSize(Vector2f(1000, 10));
@@ -79,19 +87,33 @@ int main()
     right.setStatic(true);
     world.AddPhysicsBody(right);
 
-
-
     Font fnt;
     if (!fnt.loadFromFile("arial.ttf")) {
         cout << "Could not load font." << endl;
         exit(3);
     }
 
-    //gameplay vvvv
 
+    // dis is where shit get real 
+    Clock clock;
+    Time lastTime(clock.getElapsedTime());
+    Time currentTime(lastTime);
+
+    //gameplay vvvv
+    long moveMS(0);
     while(enemyHP > 0 && playerHP > 0) {
 
+        currentTime = clock.getElapsedTime();
+        Time deltaTime = currentTime - lastTime;
+        long deltaMS = deltaTime.asMilliseconds();
+        if (deltaMS > 9) {
+            moveMS = moveMS + deltaMS;
+            lastTime = currentTime;
+            world.UpdatePhysics(deltaMS);
+            MoveCrossbow(crossBow, deltaMS);
+        //potential bug, if knocked out, everything will undraw.
         window.draw(background);
+        window.draw(Enemy);
         window.draw(Player);
         Text hpText;
         hpText.setString(to_string(enemyHP));
@@ -102,15 +124,16 @@ int main()
 
         window.display();
 
-        Player.setCenter(Vector2f(500, 900 - (sz.y / 2)));
+        //Player.setCenter(Vector2f(500, 900 - (sz.y / 2))); (potentially need to remove)
 
-        //MY CURRENT IDEA, SLIDE THEM ACROSS THE FLOOR AND THEN ONCE THEY REACH X=400 OR 600, SEND THEM BACK. DURING THIS TIME THEY ARE INVINCIBLE.
+        //use a timer, slide them across for a certain amount of time. 
 
         if (Keyboard::isKeyPressed(Keyboard::Right)) {
-            Player.setCenter(Vector2f(600, 900 - (sz.y / 2)));
-            LoadTex(playTex, "images/PUNCH_R.png");
-            Player.setTexture(playTex);
+            if (moveMS > 1000) { 
+                moveMS = 0;
             cout << "right" << endl;
+            Player.setCenter(Vector2f(500, 900));
+            //if this idea bombs, just copy bottom part up. PUNCH_R.png
          }
         if (Keyboard::isKeyPressed(Keyboard::Left)) {
             Player.setCenter(Vector2f(400, 900 - (sz.y / 2)));
