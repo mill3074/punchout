@@ -131,9 +131,16 @@ int main()
         if (Keyboard::isKeyPressed(Keyboard::Right)) {
             if (moveMS > 1000) { 
                 moveMS = 0;
+                //while statement using MS < 1000
+                //swap img to a dodging frame 
+                //change position by a set velocity
+                //end while statement
+                //set back to center (like below) 
+                //(duplicate below if this works)
+                //potential bug: will it take other inputs during this? what happens if i hold down right?
             cout << "right" << endl;
             Player.setCenter(Vector2f(500, 900));
-            //if this idea bombs, just copy bottom part up. PUNCH_R.png
+            //if this idea bombs, just copy bottom part up. PUNCH_R.png, x is 600
          }
         if (Keyboard::isKeyPressed(Keyboard::Left)) {
             Player.setCenter(Vector2f(400, 900 - (sz.y / 2)));
@@ -142,8 +149,16 @@ int main()
             cout << "left" << endl;
         }
         if (Keyboard::isKeyPressed(Keyboard::Space)) {
+            //same as above, but the time window should be much much smaller.
+            //also have them go forwards instead of to the side.
             cout << "Punch" << endl;
         }
+
+        //my next big concern is hitboxes. before he attacks, he needs to take damage.
+        //most likely will include invisible shapes for collision with the fighter.
+        //same for hitting the enemy.
+        //alternative idea is that they are assigned a number based on what position/action they are in.
+        //if the numbers are equal, any damage taken goes through, if not, it counts as a miss?
 
     }
 
