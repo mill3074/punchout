@@ -40,32 +40,32 @@ Vector2f GetTextSize(Text text) {
 
 //stuff, dont worry about this ^^
 
-int main() 
+int main()
 {
     RenderWindow window(VideoMode(1000, 1000), "PunchOut!");
     World world(Vector2f(0, 0));
     int enemyHP(10);
     int playerHP(3);
 
-    PhysicsSprite& background = *new PhysicsSprite();  
+    PhysicsSprite& background = *new PhysicsSprite();
     Texture bgTex;
     LoadTex(bgTex, "images/ring.png");
     background.setTexture(bgTex);
-    background.setCenter(Vector2f(500,500));
+    background.setCenter(Vector2f(500, 500));
 
     PhysicsSprite& Enemy = *new PhysicsSprite();
     Texture enemyTex;
     LoadTex(enemyTex, "images/enemy.png");
     Enemy.setTexture(enemyTex);
     Vector2f szEnemy = Enemy.getSize();
-    Enemy.setCenter(Vector2f(500,600));
+    Enemy.setCenter(Vector2f(500, 600));
 
     PhysicsSprite& Player = *new PhysicsSprite();
     Texture playTex;
     LoadTex(playTex, "images/STAND.png");
     Player.setTexture(playTex);
     Vector2f sz = Player.getSize();
-    Player.setCenter(Vector2f(500,900));
+    Player.setCenter(Vector2f(500, 900));
 
     //vvv i lwk dont need this but it was kinda in the grading so idk vvv
 
@@ -101,7 +101,7 @@ int main()
 
     //gameplay vvvv
     long moveMS(0);
-    while(enemyHP > 0 && playerHP > 0) {
+    while (enemyHP > 0 && playerHP > 0) {
 
         currentTime = clock.getElapsedTime();
         Time deltaTime = currentTime - lastTime;
@@ -110,61 +110,65 @@ int main()
             moveMS = moveMS + deltaMS;
             lastTime = currentTime;
             world.UpdatePhysics(deltaMS);
-            MoveCrossbow(crossBow, deltaMS);
-        //potential bug, if knocked out, everything will undraw.
-        window.draw(background);
-        window.draw(Enemy);
-        window.draw(Player);
-        Text hpText;
-        hpText.setString(to_string(enemyHP));
-        hpText.setFont(fnt);
-        window.draw(hpText);
-        Text arrowCountText;
-       
+            cout << moveMS << endl;
+            //MoveCrossbow(crossBow, deltaMS);
+            //potential bug, if knocked out, everything will undraw.
+            window.draw(background);
+            window.draw(Enemy);
+            window.draw(Player);
+            Text hpText;
+            hpText.setString(to_string(enemyHP));
+            hpText.setFont(fnt);
+            window.draw(hpText);
+            Text arrowCountText;
 
-        window.display();
 
-        //Player.setCenter(Vector2f(500, 900 - (sz.y / 2))); (potentially need to remove)
+            window.display();
 
-        //use a timer, slide them across for a certain amount of time. 
+            //Player.setCenter(Vector2f(500, 900 - (sz.y / 2))); (potentially need to remove)
 
-        if (Keyboard::isKeyPressed(Keyboard::Right)) {
-            if (moveMS > 1000) { 
-                moveMS = 0;
-                //while statement using MS < 1000
-                //swap img to a dodging frame 
-                //change position by a set velocity
-                //end while statement
-                //set back to center (like below) 
-                //(duplicate below if this works)
-                //potential bug: will it take other inputs during this? what happens if i hold down right?
-            cout << "right" << endl;
-            Player.setCenter(Vector2f(500, 900));
-            //if this idea bombs, just copy bottom part up. PUNCH_R.png, x is 600
-         }
-        if (Keyboard::isKeyPressed(Keyboard::Left)) {
-            Player.setCenter(Vector2f(400, 900 - (sz.y / 2)));
-            LoadTex(playTex, "images/PUNCH_L.png");
-            Player.setTexture(playTex);
-            cout << "left" << endl;
+            //use a timer, slide them across for a certain amount of time. 
+
+            if (Keyboard::isKeyPressed(Keyboard::Right)) {
+                cout << "right" << endl;
+                for (int i(0); i < 500; i++) {
+                    LoadTex(playTex, "images/PUNCH_R.png");
+                    int x = 50 + ((200 / 5) * i);
+                    Player.setCenter(Vector2f(x, 200 + (sz.y / 2)));
+                    Player.setVelocity(Vector2f(0.5, 0));
+                }
+                LoadTex(playTex, "images/STAND.png");
+                Player.setCenter(Vector2f(500, 900));
+                    
+                    //if this idea bombs, just copy bottom part up. PUNCH_R.png, x is 600
+            }
+            if (Keyboard::isKeyPressed(Keyboard::Left)) {
+                    Player.setCenter(Vector2f(400, 900 - (sz.y / 2)));
+                    LoadTex(playTex, "images/PUNCH_L.png");
+                    Player.setTexture(playTex);
+                    cout << "left" << endl;
+            }
+            if (Keyboard::isKeyPressed(Keyboard::Space)) {
+                    //same as above, but the time window should be much much smaller.
+                    //also have them go forwards instead of to the side.
+                    cout << "Punch" << endl;
+            }
+
+                
+
+
         }
-        if (Keyboard::isKeyPressed(Keyboard::Space)) {
-            //same as above, but the time window should be much much smaller.
-            //also have them go forwards instead of to the side.
-            cout << "Punch" << endl;
-        }
-
-        //my next big concern is hitboxes. before he attacks, he needs to take damage.
-        //most likely will include invisible shapes for collision with the fighter.
-        //same for hitting the enemy.
-        //alternative idea is that they are assigned a number based on what position/action they are in.
-        //if the numbers are equal, any damage taken goes through, if not, it counts as a miss?
 
     }
-
-
 }
 
+//my next big concern is hitboxes. before he attacks, he needs to take damage.
+//most likely will include invisible shapes for collision with the fighter.
+//same for hitting the enemy.
+//alternative idea is that they are assigned a number based on what position/action they are in.
+//if the numbers are equal, any damage taken goes through, if not, it counts as a miss?
+
+//could use the duckMS timer from lab 8 to give a window for when the enemy attacks
 
 
 
